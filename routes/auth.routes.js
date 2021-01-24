@@ -6,6 +6,12 @@ const { check, validationResult } = require('express-validator')
 const jwt = require('jsonwebtoken')
 const config = require('config')
 
+router.get('/register', async(req, res) => {
+    const base = await User.find()
+    console.log(base)
+    res.send(base)
+
+})
 router.post(
     '/register',
     /**
@@ -13,7 +19,9 @@ router.post(
      */
     [
         check('email', 'некорректный email').isEmail(),
-        check('password', 'минимальная длина пароля 6 символов').isLength({ min: 6 })
+        check('password', 'минимальная длина пароля 6 символов').isLength({ min: 6 }),
+        check('name', 'минимальная длина пароля 6 символов').isLength({ min: 1 }),
+        check('phone', 'минимальная длина пароля 6 символов').isLength({ min: 1 })
     ],
     async (req, res, next) => {
         try {
@@ -21,15 +29,15 @@ router.post(
              * ValidatoResut вернет результат проверки миддвейров , есть ли ошибки или нет
              */
             const errors = validationResult(req)
-            if (!errors.isEmpty) {
-                return res.status(400).json({ errors: errors.array(), message: 'некорректные данные при регистрации' })
+            if (!errors.isEmpty()) {
+                return res.json({ errors: errors.array(), message: 'некорректные данные при регистрации' })
             }
             /**
              *  из req должны придти данные из которых с помощью body мы берем
              *  emai и password 
              */
-            const { email, password } = req.body
-            console.log(req.body)
+            console.log('req.body: ', req.body)
+            const { email, password, name, phone } = req.body
             /**
              * проверяем есть ли такой пользователь в базе с помощью метода из монго
              * findOne 
@@ -40,7 +48,9 @@ router.post(
              * что такой пользователь уже существует
              */
             if (candidate) {
-                return res.status(400).json({ message: 'такой пользователь уже есть' })
+                console.log('такой пользователь есть')
+                return res.json({ message: 'такой пользователь уже есть' })
+                
             }
             /**
              * если такого пользователя в базе не существует то хэшируем его с помощью метода
@@ -50,7 +60,7 @@ router.post(
             /**
              * сдздаем новую запись из экземпляра модели
              */
-            const user = new User({ email, password: hashedPassword })
+            const user = new User({ email, password: hashedPassword, name, phone })
             /**
              * отправляем эту запись в базу данных ( метод асинхронный)
              */
@@ -61,7 +71,7 @@ router.post(
             res.status(201).json({ message: 'пользователь создан' })
         } catch (e) {
             res.status(500).json({ message: 'что-то пошло не так, попробуйте снова' })
-
+            throw e
         }
     })
 
@@ -115,12 +125,12 @@ router.post(
             const tokken = jwt.sign(
                 { userId: user.id },
                 config.get('jwtSecretKey'),
-                { expiresIn: '1h'}
+                { expiresIn: '1h' }
             )
             /**
              *  и в конце отвачаем клиенту передав токен
              */
-            res.json({token, userId: user.id})
+            res.json({ token, userId: user.id })
         } catch (e) {
             res.status(500).json({ message: 'что-то пошло не так, попробуйте снова' })
 
