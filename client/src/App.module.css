@@ -1,0 +1,95 @@
+.app_container{
+  display: flex;
+  justify-content: center;
+  padding-top: 50px;
+  width: 100%;
+  min-height: 1100px;
+}
+
+.form_container{
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items:center;
+  border-radius: 10px;
+  width: 300px;
+  min-height: 260px;
+  max-height: 400px;
+  box-shadow: 0 0 10px rgba(128, 128, 128, 0.089);
+  transition: 0.3s;
+}
+
+
+
+.form_container:hover{
+  box-shadow: 0 0 10px rgba(128, 128, 128, 0.315);
+  transition: 0.3s;
+  transform: scale(1.06)
+}
+
+.form_image{
+  width: 200px;
+  margin-bottom: 15px;
+}
+
+.form{
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items:center;
+  
+  
+}
+
+.form_box{
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.form_input_mail:focus{
+  color:#3C475B;
+}
+
+.form_input_mail, .form_input_password, .form_input_name, .form_input_phone {
+  border: 1px solid rgba(128, 128, 128, 0.384);
+  margin-bottom: 5px;
+  border-radius: 5px;
+  width: 250px;
+
+}
+
+.buttons_block{
+  display: flex;
+  width: 250px;
+  height: 50px;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.button_login, .button_register{
+  display: flex;
+  justify-content: center;
+  align-items:center;
+  min-width: 110px;
+  padding: 3px;
+  height: 30px;
+  font-size: 0.7rem;
+  border-radius:10px;
+  box-shadow: 0 0 10px rgba(128, 128, 128, 0.171);
+  color:#3C475B;
+  transition: 0.3s;
+  cursor: pointer;
+  border: none;
+}
+
+.button_login:hover,.button_register:hover{
+  transform: scale(1.08);
+  transition: 0.3s;
+  box-shadow: 0 0 10px rgba(128, 128, 128, 0.527);
+  background-color: #78c47be3;
+}
+
+.answer{
+  font-size: 0.8rem;
+  color: #3C475B;
+}
