@@ -102,7 +102,7 @@ router.post(
              *  из req должны придти данные из которых с помощью body мы берем
              *  emai и password 
              */
-            console.log('req,body',req.body)
+           
             
             const { email, password } =  await req.body
 
@@ -134,7 +134,7 @@ router.post(
             const token = await jwt.sign(
                 { userId: user.id },
                 config.get('jwtSecretKey'),
-                { expiresIn: '1h' }
+                { expiresIn: '1m' }
             )
             /**
              *  и в конце отвачаем клиенту передав токен

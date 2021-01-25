@@ -1,0 +1,5 @@
+{
+    "port": 5000,
+    "mongoConnect": "mongodb+srv://Brandon:311774@cluster0.xndrw.mongodb.net/MERN?retryWrites=true&w=majority",
+    "jwtSecretKey": "Brandon_heat_dre"
+}

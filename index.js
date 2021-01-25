@@ -4,6 +4,7 @@
 const express = require('express')
 const config = require('config')
 const mongoose = require('mongoose')
+const path= require('path')
 /**
  * константы как правило пишутся с большой буквы
  */
@@ -22,7 +23,12 @@ app.use(express.json({extended: true})) // for parsing application/json
  */
 app.use('/api/auth', require('./routes/auth.routes'))
 
-
+if (process.env.NODE_ENV === 'production'){
+    app.use('/',express.static(path.join(__dirname,'client', 'build')))
+    app.get('*',(req,res)=>{
+        res.sendFile(path.resolve(__dirname, 'client','build','index.html'))
+    })
+}
 const start = async () => {
     try {
         await mongoose.connect(config.get('mongoConnect'), {
