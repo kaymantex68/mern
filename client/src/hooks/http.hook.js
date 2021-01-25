@@ -7,22 +7,23 @@ export const useHttp = () => {
 
     const [loading, setLoading] = useState(false)
 
-    const delay =(ms)=>{
-        return new Promise((resolve)=>{
-            setTimeout(()=>{
+    const delay = (ms) => {
+        return new Promise((resolve) => {
+            setTimeout(() => {
                 resolve()
-            },ms)
-        })}
+            }, ms)
+        })
+    }
 
 
-    const request = useCallback(async (data) => {
+    const request = useCallback(async (url, data) => {
         setLoading(true)
-        const response = await axios.post('/api/auth/register', { ...data },)
+        const response = await axios.post(url, { ...data })
             .then(res => res)
         await delay(1)
         setLoading(false)
         return response
-    },[])
+    }, [])
 
 
 

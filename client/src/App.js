@@ -14,10 +14,22 @@ function App() {
   const [response, setResponse] = React.useState(null)
   const { request, loading } = useHttp();
 
-  const HandleClick = () => {
-    request({ ...formData }).then(res => {
+  const registHandler = async () => {
+    await request('/api/auth/register', { ...formData },).then(res => {
       setResponse(res.data.message)
+      console.log(res.data.message)
     })
+  }
+
+  const loginHandler = async () => {
+    try {
+      await request('/api/auth/login', { ...formData },).then(res => {
+        setResponse(res.data.message)
+        console.log(res.data)
+      })
+    } catch (e) {
+      console.log('error: ', e)
+    }
 
   }
 
@@ -30,7 +42,7 @@ function App() {
           <form className={classes.form}>
             <input
               className={classes.form_input_mail}
-              name="email" 
+              name="email"
               placeholder="email"
               value={formData.email}
               onChange={(e) => setFormData({ ...formData, [e.target.name]: e.target.value })}
@@ -48,7 +60,7 @@ function App() {
             <input
               className={classes.form_input_name}
               name="name"
-              placeholder="имя-"
+              placeholder="имя"
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, [e.target.name]: e.target.value })}
               disabled={loading}
@@ -62,8 +74,8 @@ function App() {
               disabled={loading}
             />
             <div className={classes.buttons_block}>
-              <button className={classes.button_login} disabled={loading}>вход</button>
-              <button className={classes.button_register} disabled={loading} onClick={() => HandleClick()}>регистрация</button>
+              <button className={classes.button_login} disabled={loading} onClick={() => loginHandler()}>вход</button>
+              <button className={classes.button_register} disabled={loading} onClick={() => registHandler()}>регистрация</button>
             </div>
             {response && <div className={classes.answer}>{response}</div>}
           </form>

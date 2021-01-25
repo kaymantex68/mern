@@ -20,8 +20,8 @@ router.post(
     [
         check('email', 'некорректный email').isEmail(),
         check('password', 'минимальная длина пароля 6 символов').isLength({ min: 6 }),
-        check('name', 'минимальная длина пароля 6 символов').isLength({ min: 1 }),
-        check('phone', 'минимальная длина пароля 6 символов').isLength({ min: 1 })
+        check('name', 'минимальная длина пароля 6 символов').isLength({ min: 2 }),
+        check('phone', 'минимальная длина пароля 6 символов').isLength({ min: 2 })
     ],
     async (req, res, next) => {
         try {
@@ -30,7 +30,9 @@ router.post(
              */
             const errors = validationResult(req)
             if (!errors.isEmpty()) {
+                
                 return res.json({ errors: errors.array(), message: 'некорректные данные при регистрации' })
+                
             }
             /**
              *  из req должны придти данные из которых с помощью body мы берем
@@ -81,40 +83,47 @@ router.post(
     * middlewars можно передвать сколько угодно , и их можно передвать в массиве
     */
     [
-        check('email', 'введите корректный email').normalizeEmail().isEmail(),
+        check('email', 'введите корректный email').isEmail(),
         check('password', 'введите пароль').exists()
     ],
     async (req, res, next) => {
         try {
+            
             /**
              * ValidatoResut вернет результат проверки миддвейров , есть ли ошибки или нет
              */
-            const errors = validationResult(req)
-            if (!errors.isEmpty) {
-                return res.status(400).json({ errors: errors.array(), message: 'некорректные данные при входе в систему' })
+            const errors = await validationResult(req)
+            
+            if (!errors.isEmpty()) {    
+                return res.json({ errors: errors.array(), message: 'некорректные данные при входе в систему' })
             }
+            
             /**
              *  из req должны придти данные из которых с помощью body мы берем
              *  emai и password 
              */
-            const { email, password } = req.body
+            console.log('req,body',req.body)
+            
+            const { email, password } =  await req.body
+
             /**
              * проверяем есть ли такой пользователь в базе с помощью метода из монго
              * findOne 
              */
+            
             const user = await User.findOne({ email })
             if (!user) {
-                res.status(400).json({ message: 'пользователь не найден' })
+                return res.json({ message: 'пользователь не найден' })
             }
             /**
              * нужно проверить совпадают ли пароли. С помощью bcrypt методом compare  мы сравниваем пароль
              * который пришел из фронтенда  password  и пароль который лежит в базе user.password. user мы получили
              * из запроса к базе  const user = await User.findOne({ email })
              */
-            const isMatch = bcrypt.compare(password, user.password)
-
+            const isMatch = await bcrypt.compare(password, user.password)
+            
             if (!isMatch) {
-                return res.status(400).json({ message: 'неверный пароль, попробуйте снова' })
+                return res.json({ message: 'неверный пароль, попробуйте снова' })
             }
             /**
              * создаем jwt токен. передаем три параметра
@@ -122,7 +131,7 @@ router.post(
              * 2 параметр это секретный ключ
              * 3 параметр { expiresIn: '1h'} время сколько будет существоват токен
              */
-            const tokken = jwt.sign(
+            const token = await jwt.sign(
                 { userId: user.id },
                 config.get('jwtSecretKey'),
                 { expiresIn: '1h' }
@@ -130,9 +139,10 @@ router.post(
             /**
              *  и в конце отвачаем клиенту передав токен
              */
-            res.json({ token, userId: user.id })
+            console.log(token, user.id)
+            res.status(201).json({ token, userId: user.id, message: 'авторизация'})
         } catch (e) {
-            res.status(500).json({ message: 'что-то пошло не так, попробуйте снова' })
+            res.json({ message: 'что-то пошло не так, попробуйте снова' })
 
         }
     })
